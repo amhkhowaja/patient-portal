@@ -3,6 +3,8 @@ from patient_db import PatientDB
 from patient_db_config import PATIENT_COLUMN_NAMES
 from patient_db_config import PATIENT_ID_COLUMN
 
+
+# FIXME it should validate every curl commands for the bad data or bad values
 class PatientAPIController:
     def __init__(self):
         self.app = Flask(__name__)
@@ -24,12 +26,16 @@ class PatientAPIController:
         # I will add more validation here
         return True
     
+    def row_to_dict(self, row_values):
+        return {row_name: row_value for row_name, row_value in zip(PATIENT_COLUMN_NAMES, row_values)}
+
+
     def create_patient(self):
         request_body = request.get_json()
         patient_id = request_body.get(PATIENT_ID_COLUMN)
         if not self.validate_patient_request_body(request_body):
             return jsonify({'result': 'failure', 'reason': 'Invalid patient data'}), 400
-        result = self.patient_db.insert_patient(request_body)
+        result = self.patient_db.insert_patient(request_body)[0]
         if result is None:
             return jsonify({'result': 'failure', 'reason': 'Failed to insert the database'}), 400
         return jsonify({PATIENT_ID_COLUMN: result}), 201

@@ -13,7 +13,7 @@ from patient_db_config import PATIENT_WARD_COLUMN
 from patient_db_config import PATIENT_ROOM_COLUMN
 
 
-class Patient():
+class Patient:
     def __init__(self, name, gender, age):
         self._name = name
         self._gender = gender
@@ -66,7 +66,7 @@ class Patient():
         conditions = [
             len(str(room_number)) != 2,
             str(room_number)[0] not in WARD_NUMBERS,
-            ]
+        ]
         if any(conditions):
             error = f"Room number {room_number} is invalid"
             raise ValueError(error)
@@ -83,7 +83,7 @@ class Patient():
             else:
                 self._ward_number = room_number[0]
                 self._room_number = room_number
-    
+
     def get_room(self):
         return self._room_number
 
@@ -97,11 +97,10 @@ class Patient():
             PATIENT_CHECKIN_COLUMN: str(self._checkin_time),
             PATIENT_CHECKOUT_COLUMN: str(self._checkout_time),
             PATIENT_WARD_COLUMN: int(self._ward_number),
-            PATIENT_ROOM_COLUMN: int(self._room_number)
+            PATIENT_ROOM_COLUMN: int(self._room_number),
         }
-    
+
     def commit(self):
         # Commit to the database using requests
         url = f"{API_CONTROLLER_URL}/patients"
         requests.post(url, json=self.get_payload())
-    

@@ -3,7 +3,8 @@ from patient import Patient
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select, insert
 
-class PatientDB():
+
+class PatientDB:
     def __init__(self):
         pass
 
@@ -19,9 +20,11 @@ class PatientDB():
             return None
         finally:
             conn.close()
-    
+
     def row_to_dict(self, row_keys, row_values):
-        return {row_name: row_value for row_name, row_value in zip(row_keys, row_values)}
+        return {
+            row_name: row_value for row_name, row_value in zip(row_keys, row_values)
+        }
 
     def select_all_patients(self):
         try:
@@ -30,18 +33,23 @@ class PatientDB():
             result = conn.execute(stmt)
             keys = result.keys()
             rows = result.fetchall()
-            patients = [{row_name: row_value for row_name, row_value in zip(keys, row)} for row in rows]
+            patients = [
+                {row_name: row_value for row_name, row_value in zip(keys, row)}
+                for row in rows
+            ]
             return patients
         except SQLAlchemyError as e:
             print("Error occurred while selecting all patients", e)
             return None
         finally:
             conn.close()
-    
+
     def select_patient(self, patient_id):
         try:
             conn = ENGINE.connect()
-            stmt = PATIENTS_TABLE.select().where(PATIENTS_TABLE.c.patient_id == patient_id)
+            stmt = PATIENTS_TABLE.select().where(
+                PATIENTS_TABLE.c.patient_id == patient_id
+            )
             result = conn.execute(stmt)
             keys = result.keys()
             values = result.fetchone()
@@ -52,11 +60,15 @@ class PatientDB():
             return None
         finally:
             conn.close()
-    
+
     def update_patient(self, patient_id, update_dict):
         try:
             conn = ENGINE.connect()
-            stmt = PATIENTS_TABLE.update().where(PATIENTS_TABLE.c.patient_id == patient_id).values(**update_dict)
+            stmt = (
+                PATIENTS_TABLE.update()
+                .where(PATIENTS_TABLE.c.patient_id == patient_id)
+                .values(**update_dict)
+            )
             result = conn.execute(stmt)
             conn.commit()
             return result.rowcount
@@ -65,11 +77,13 @@ class PatientDB():
             return None
         finally:
             conn.close()
-    
+
     def delete_patient(self, patient_id):
         try:
             conn = ENGINE.connect()
-            stmt = PATIENTS_TABLE.delete().where(PATIENTS_TABLE.c.patient_id == patient_id)
+            stmt = PATIENTS_TABLE.delete().where(
+                PATIENTS_TABLE.c.patient_id == patient_id
+            )
             result = conn.execute(stmt)
 
             conn.commit()

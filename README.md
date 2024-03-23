@@ -12,8 +12,8 @@ The project is structured as follows:
 
 ## Prerequisites
 
-Install **Python** (recommended version >= 3.10)
-Install **Gitbash** (Optional)
+- Install **Python** (recommended version >= 3.10)
+- Install **Gitbash** (Optional)
 
 ## Installation Steps
 
@@ -36,7 +36,9 @@ python -m venv venv
 ```
 
 4. **Activate the virtual environment**
+
 *In linux*
+
 ```bash
 source venv/bin/activate
 ```
@@ -46,7 +48,13 @@ source venv/bin/activate
 source venv/Scripts/activate
 ```
 
-5. **For Running Flask**
+5. **Install python packages to run the application**
+```bash
+python -m pip install -r requirements.txt
+```
+
+6. **For Running Flask**
 ```bash
 python src/api_controller.py
 ```
+

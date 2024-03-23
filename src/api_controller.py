@@ -34,7 +34,6 @@ class PatientAPIController:
 
     def create_patient(self):
         request_body = request.get_json()
-        patient_id = request_body.get(PATIENT_ID_COLUMN)
         if not self.validate_patient_request_body(request_body):
             return jsonify({"result": "failure", "reason": "Invalid patient data"}), 400
         result = self.patient_db.insert_patient(request_body)[0]

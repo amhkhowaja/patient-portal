@@ -58,3 +58,7 @@ python -m pip install -r requirements.txt
 python src/api_controller.py
 ```
 
+7. **For Running Streamlit**
+```bash
+streamlit run .\src\front.py
+```

@@ -62,16 +62,16 @@ class Patient:
         Generates a unique ID for the patient.
 
         Returns:
-            int: The unique ID of the patient.
+            str: The unique ID of the patient.
         """
-        return int(uuid.uuid4())
+        return str(uuid.uuid4())
 
     def get_id(self):
         """
         Gets the ID of the patient.
 
         Returns:
-            int: The ID of the patient.
+            str: The ID of the patient.
         """
         return self._id
 
@@ -211,7 +211,7 @@ class Patient:
             dict: The patient payload.
         """
         return {
-            PATIENT_ID_COLUMN: int(self._id),
+            PATIENT_ID_COLUMN: str(self._id),
             PATIENT_NAME_COLUMN: str(self._name),
             PATIENT_AGE_COLUMN: int(self._age),
             PATIENT_GENDER_COLUMN: str(self._gender),
@@ -226,4 +226,4 @@ class Patient:
         Commits the patient data to the database.
         """
         url = f"{API_CONTROLLER_URL}/patients"
-        requests.post(url, json=self.create_patient_payload(), timeout=10)
+        return requests.post(url, json=self.create_patient_payload(), timeout=5)

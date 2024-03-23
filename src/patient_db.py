@@ -35,7 +35,7 @@ class PatientDB:
             request_body (dict): The request body containing the patient information.
 
         Returns:
-            int: The primary key of the inserted patient record, or None if an error occurred.
+            str: The primary key of the inserted patient record, or None if an error occurred.
         """
         try:
             conn = ENGINE.connect()

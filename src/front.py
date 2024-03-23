@@ -37,8 +37,11 @@ class ListPatientsTab(Tab):
         response = requests.get(PATIENTS_API_URL, timeout=5)
         if response.status_code == 200:
             # create a table to show the data
-            patients = pd.DataFrame.from_records(response.json(), index="patient_id")
-            st.table(patients)
+            try:
+                patients = pd.DataFrame.from_records(response.json(), index="patient_id")
+                st.table(patients)
+            except KeyError:
+                st.write("No patients found")
         else:
             st.write("Failed to fetch data")
 
@@ -55,7 +58,6 @@ class InsertPatientTab(Tab):
         and handles the insertion process.
         create_patient(patient_name, patient_gender, patient_age, patient_room):
         Creates a new Patient object with the given details.
-        insert_patient(patient_data): Inserts the patient data into the patients API.
 
     """
 
@@ -76,8 +78,7 @@ class InsertPatientTab(Tab):
             self.patient = self.create_patient(
                 patient_name, patient_gender, patient_age, patient_room
             )
-            self.patient_data = self.patient.create_patient_payload()
-            self.insert_patient(self.patient_data)
+
 
     def create_patient(self, patient_name, patient_gender, patient_age, patient_room):
         """
@@ -99,25 +100,12 @@ class InsertPatientTab(Tab):
         patient.set_room(patient_room)
         patient.set_checkin_time()
 
-        patient.commit()
-        return patient
-
-    def insert_patient(self, patient_data):
-        """
-        Inserts the patient data into the patients API.
-
-        Args:
-            patient_data (dict): The patient data to be inserted.
-
-        Returns:
-            None
-
-        """
-        response = requests.post(PATIENTS_API_URL, json=patient_data, timeout=5)
+        response = patient.commit()
         if response.status_code == 201:
             st.write("Patient inserted successfully")
         else:
             st.write("Failed to insert the patient")
+        return patient
 
 
 class Portal:

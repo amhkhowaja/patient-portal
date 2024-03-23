@@ -55,6 +55,7 @@ class PatientAPIController:
         """
         required_fields = PATIENT_COLUMN_NAMES
         if not all(field in request_body for field in required_fields):
+            print("Validation failed: missing required fields")
             return False
         # I will add more validation here
         return True
@@ -81,7 +82,7 @@ class PatientAPIController:
         request_body = request.get_json()
         if not self.validate_patient_request_body(request_body):
             return jsonify({"result": "failure", "reason": "Invalid patient data"}), 400
-        result = self.patient_db.insert_patient(request_body)[0]
+        result = self.patient_db.insert_patient(request_body)
         if result is None:
             return (
                 jsonify(
@@ -89,7 +90,7 @@ class PatientAPIController:
                 ),
                 400,
             )
-        return jsonify({PATIENT_ID_COLUMN: result}), 201
+        return jsonify({PATIENT_ID_COLUMN: result[0]}), 201
 
     def get_patients(self):
         """

@@ -34,7 +34,7 @@ PATIENT_COLUMN_NAMES = [
 PATIENTS_TABLE = Table(
     PATIENTS_TABLE_NAME,
     METADATA,
-    Column(PATIENT_ID_COLUMN, Integer, primary_key=True),
+    Column(PATIENT_ID_COLUMN, String, primary_key=True),
     Column(PATIENT_NAME_COLUMN, String),
     Column(PATIENT_AGE_COLUMN, Integer),
     Column(PATIENT_GENDER_COLUMN, String),

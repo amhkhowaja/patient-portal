@@ -1,3 +1,5 @@
+"""Common configuration variables for the application."""
+
 DOCTORS = ["Csaba", "Gabor", "Szabolcs", "Sumair", "Mehdi", "Ali"]
 GENDERS = ["Male", "Female"]
 WARD_NUMBERS = [1, 2, 3, 4]

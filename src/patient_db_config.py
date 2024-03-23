@@ -1,3 +1,5 @@
+"""All sqlalchemy related config goes here, including the database schema definition."""
+
 import sqlite3
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, MetaData

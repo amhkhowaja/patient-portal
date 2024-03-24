@@ -62,3 +62,37 @@ python src/api_controller.py
 ```bash
 streamlit run .\src\front.py
 ```
+## Patient API Features
+
+The Patient API provides the following features:
+
+- **Create Patient:** This feature allows you to create a new patient record. The API endpoint for this feature is `/patients` and the HTTP method is `POST`. You can test it out in (`testing-api-templates/create_patient.sh`).
+
+In Terminal :
+
+First Run the flask server by running the API_CONTROLLER (`src/api_controller.py`) directly or using linux command:
+```bash
+python src/api_controller.py
+```
+Once the Flask server is running, open a new terminal and keep the server running in the first one.
+
+Then,
+```bash
+cd testing-api-templates
+```
+
+Then,
+```bash
+bash create_patient.sh
+```
+
+If it returns the patient_id in the response then meaning that Patient has been created successfully and added to the database.
+
+- **Read Patient:** This feature allows you to retrieve the details of a specific patient. The API endpoint for this feature is `/patients/{id}` and the HTTP method is `GET`.
+
+
+- **Update Patient:** This feature allows you to update the details of a specific patient. The API endpoint for this feature is `/patients/{id}` and the HTTP method is `PUT`.
+
+- **Delete Patient:** This feature allows you to delete a specific patient record. The API endpoint for this feature is `/patients/{id}` and the HTTP method is `DELETE`.
+
+- **List Patients:** This feature allows you to retrieve the list of all patients. The API endpoint for this feature is `/patients` and the HTTP method is `GET`.

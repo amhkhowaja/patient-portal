@@ -113,38 +113,36 @@ class UpdatePatientTab(Tab):
         super().write()
         self.search_patient()
 
-    def edited_columns(self, original_df, edited_df):
-        """Will show the edited columns in the data editor"""
-        # Check which data has been edited
-        if not edited_df.equals(original_df):
-            st.write('Dataframe has been edited.')
-
-            # Find the rows where the dataframes differ
-            diff_df = edited_df != original_df
-            edited_cols = diff_df.any()
-
-            # Display the edited data
-            st.write('Edited columns:')
-            st.write(edited_cols[edited_cols].index.tolist())
-        else:
-            st.write('Dataframe has not been edited.')
-
     def edited_rows(self, original_df, edited_df):
         """Will show the edited rows in the data editor"""
-        # Check which data has been edited
+
         if not edited_df.equals(original_df):
             st.write('Dataframe has been edited.')
 
-            # Find the rows where the dataframes differ
             diff_df = edited_df != original_df
             edited_rows = diff_df.any(axis=1)
             edited_data = edited_df[edited_rows]
 
-            # Display the edited data
-            st.write('Edited data:')
-            st.write(edited_data)
-        else:
-            st.write('Dataframe has not been edited.')
+            return edited_data
+        return None
+
+    def update_data(self, edited_rows):
+        """Will update the edited data into the database"""
+        if edited_rows is not None:
+            edited_rows.reset_index(inplace=True)
+            payloads = edited_rows.to_dict(orient="records")
+            print(payloads)
+            for payload in payloads:
+                print(payload)
+                patient_id = payload["patient_id"]
+                print(patient_id)
+                uri = PATIENT_API_URL+"/"+patient_id
+                response = requests.put(uri, json=payload, timeout=5)
+                if response.status_code == 200:
+                    st.write(f"Patient id {patient_id} has been updated")
+                else:
+                    st.write("Failed to update the data in the database")
+
 
     def search_patient(self):
         """Search patients with the search bar"""
@@ -160,10 +158,11 @@ class UpdatePatientTab(Tab):
                     patients = patients[new_order]
                     original_data = patients.copy()
                     editable_data = st.data_editor(patients)
-                    self.edited_rows(original_data, editable_data)
-                    self.edited_columns(original_data, editable_data)
-                except KeyError:
-                    st.write("No patients found")
+                    # self.edited_rows(original_data, editable_data)
+                    # self.edited_columns(original_data, editable_data)
+                    self.update_data(self.edited_rows(original_data, editable_data))
+                except KeyError as e:
+                    st.write("No patients found", e)
             else:
                 st.write("Failed to fetch the Patients")
         else:

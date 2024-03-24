@@ -1,6 +1,7 @@
 """patient_db module"""
 
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import operators
 from sqlalchemy import select
 from patient_db_config import PATIENTS_TABLE, ENGINE
 
@@ -80,6 +81,35 @@ class PatientDB:
             return patients
         except SQLAlchemyError as e:
             print("Error occurred while selecting all patients", e)
+            return None
+        finally:
+            conn.close()
+
+    def fetch_patient_id_by_name(self, patient_name):
+        """
+        Retrieves the patient ID by patient name.
+
+        Args:
+            patient_name (str): The name of the patient.
+
+        Returns:
+            int: The patient ID, or None if an error occurred.
+        """
+        try:
+            conn = ENGINE.connect()
+            stmt = PATIENTS_TABLE.select().where(
+                operators.like_op(
+                    PATIENTS_TABLE.c.patient_name,
+                    "%"+patient_name+"%"
+                )
+            )
+            result = conn.execute(stmt)
+            keys = result.keys()
+            rows = result.fetchall()
+            patients = [dict(zip(keys, row)) for row in rows]
+            return patients
+        except SQLAlchemyError as e:
+            print("Error occurred while fetching patient ID by name", e)
             return None
         finally:
             conn.close()

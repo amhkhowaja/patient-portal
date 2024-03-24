@@ -107,6 +107,79 @@ class InsertPatientTab(Tab):
             st.write("Failed to insert the patient")
         return patient
 
+class UpdatePatientTab(Tab):
+    """Patients data can be updated here"""
+    def write(self):
+        super().write()
+        self.search_patient()
+
+    def edited_columns(self, original_df, edited_df):
+        """Will show the edited columns in the data editor"""
+        # Check which data has been edited
+        if not edited_df.equals(original_df):
+            st.write('Dataframe has been edited.')
+
+            # Find the rows where the dataframes differ
+            diff_df = edited_df != original_df
+            edited_cols = diff_df.any()
+
+            # Display the edited data
+            st.write('Edited columns:')
+            st.write(edited_cols[edited_cols].index.tolist())
+        else:
+            st.write('Dataframe has not been edited.')
+
+    def edited_rows(self, original_df, edited_df):
+        """Will show the edited rows in the data editor"""
+        # Check which data has been edited
+        if not edited_df.equals(original_df):
+            st.write('Dataframe has been edited.')
+
+            # Find the rows where the dataframes differ
+            diff_df = edited_df != original_df
+            edited_rows = diff_df.any(axis=1)
+            edited_data = edited_df[edited_rows]
+
+            # Display the edited data
+            st.write('Edited data:')
+            st.write(edited_data)
+        else:
+            st.write('Dataframe has not been edited.')
+
+    def search_patient(self):
+        """Search patients with the search bar"""
+        search_term = st.text_input("Search Patient By Name")
+        if search_term:
+            response = requests.get(PATIENTS_API_URL + "?search_name=" + search_term, timeout=5)
+            if response.status_code == 200:
+                patient_data = response.json()
+                try:
+                    patients = pd.DataFrame.from_records(patient_data, index="patient_id")
+                    new_order = [col for col in patients.columns if col != "patient_name"]
+                    new_order.insert(0, "patient_name")
+                    patients = patients[new_order]
+                    original_data = patients.copy()
+                    editable_data = st.data_editor(patients)
+                    self.edited_rows(original_data, editable_data)
+                    self.edited_columns(original_data, editable_data)
+                except KeyError:
+                    st.write("No patients found")
+            else:
+                st.write("Failed to fetch the Patients")
+        else:
+            response = requests.get(PATIENTS_API_URL, timeout=5)
+            if response.status_code == 200:
+                patient_data = response.json()
+                try:
+                    patients = pd.DataFrame.from_records(patient_data, index="patient_id")
+                    new_order = [col for col in patients.columns if col != "patient_name"]
+                    new_order.insert(0, "patient_name")
+                    patients = patients[new_order]
+                    st.data_editor(patients)
+                except KeyError:
+                    st.write("No patients found")
+            else:
+                st.write("Failed to fetch the Patients")
 
 class Portal:
     """Main Portal class for the patients portal application."""
@@ -134,17 +207,15 @@ class Portal:
         Returns:
             None
         """
-        # Use the sidebar to select the page
 
-        # tab_name = st.sidebar.selectbox("Tabs", tuple(self.tabs.keys()))
-
-        # Run the selected page
-        # self.tabs[tab_name].write()
         with self.patient_tab:
             ListPatientsTab("Patients List").write()
 
         with self.insert_tab:
             InsertPatientTab("Insert Patient").write()
+
+        with self.update_tab:
+            UpdatePatientTab("Update Patient").write()
 
 
 # Create an instance of the app and run it

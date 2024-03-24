@@ -99,7 +99,11 @@ class PatientAPIController:
         Returns:
             tuple: A tuple containing the response data and status code.
         """
-        result = self.patient_db.select_all_patients()
+        search_name = request.args.get('search_name')
+        if search_name is None:
+            result = self.patient_db.select_all_patients()
+        else:
+            result = self.patient_db.fetch_patient_id_by_name(str(search_name))
         if result is None:
             return (
                 jsonify(

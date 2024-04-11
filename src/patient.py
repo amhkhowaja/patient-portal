@@ -226,4 +226,14 @@ class Patient:
         Commits the patient data to the database.
         """
         url = f"{API_CONTROLLER_URL}/patients"
-        return requests.post(url, json=self.create_patient_payload(), timeout=5)
+
+        list_patients = request.get(url)
+        if list_patients.status_code == 200:
+            list_patients = list_patients.json()
+            list_patients_ids = [patient["patient_id"] for patient in list_patients]
+            if self._id in list_patients_ids:
+                return requests.put(url, json=self.create_patient_payload(), timeout=5)
+            else:
+                return requests.post(url, json=self.create_patient_payload(), timeout=5)
+
+        return None

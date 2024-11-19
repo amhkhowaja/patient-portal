@@ -227,7 +227,7 @@ class Patient:
         """
         url = f"{API_CONTROLLER_URL}/patients"
 
-        list_patients = request.get(url)
+        list_patients = requests.get(url)
         if list_patients.status_code == 200:
             list_patients = list_patients.json()
             list_patients_ids = [patient["patient_id"] for patient in list_patients]
